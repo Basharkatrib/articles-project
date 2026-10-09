@@ -12,7 +12,7 @@ function ArticleDetails() {
         async function getData() {
             try {
                 setIsLoading(true);
-                const response = await axios.get(`https://jsonplaceholder.typicode.com/posts/${id}`);
+                const response = await axios.get(`http://127.0.0.1:8000/api/articles/${id}`);
                 setArticle(response.data);
             } catch (error) {
                 setError("There is an error");

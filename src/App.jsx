@@ -8,6 +8,8 @@ import AddArticle from './Pages/AddArticle';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import ArticleDetails from './Pages/ArticleDetails';
+import Register from './Pages/Register';
+import Login from './Pages/Login';
 
 function App() {
 
@@ -47,7 +49,7 @@ function App() {
        async function getData(){
           try{
             setIsloading(true)
-            const response = await axios.get("https://jsonplaceholder.typicode.com/posts?_limit=10");
+            const response = await axios.get("http://127.0.0.1:8000/api/articles");
             setArticle(response.data);
           }catch(err){
             setIsError("There is an Error unexpected");
@@ -81,6 +83,8 @@ function App() {
         <Route path="/articles" element={<Articles  articles={articles} handleDelete={handleDelete}/>} />
         <Route path="/article/:id" element={<ArticleDetails />} />
         <Route path="/add" element={<AddArticle onAdd={addArticle} />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/login" element={<Login />} />
       </Routes>
     </div>
 
