@@ -1,10 +1,18 @@
+import axios from "axios";
 import { useState } from "react";
+import { useAuth } from "../context/AuthContext";
+import { useNavigate } from "react-router";
 
-function AddArticle({ onAdd }) {
+function AddArticle() {
     const [title, setTitle] = useState("");
     const [body, setBody] = useState("");
+    const [image, setImage] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
+    const { token } = useAuth();
+    const navigate = useNavigate();
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
         if (!title.trim() || !body.trim()) {
@@ -12,14 +20,31 @@ function AddArticle({ onAdd }) {
             return;
         }
 
-        onAdd({
-            id: Date.now(),
-            title: title,
-            body: body,
-        });
+        const formData = new FormData();
+        formData.append('title', title);
+        formData.append('body', body);
+        if (image) {
+            formData.append('image', image);
+        }
 
-        setTitle("");
-        setBody("");
+        try {
+            setLoading(true);
+            const response = await axios.post("http://127.0.0.1:8000/api/articles", formData,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            )
+            navigate("/articles");
+        } catch (err) {
+            console.log(err);
+        }
+        finally {
+            setLoading(false);
+            setTitle("");
+            setBody("");
+        }
     };
 
     return (
@@ -42,6 +67,11 @@ function AddArticle({ onAdd }) {
                             placeholder="Enter the title..."
                             value={title}
                             onChange={(e) => setTitle(e.target.value)}
+                            className="w-full border border-gray-200 rounded-lg px-4 py-2 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                        <input
+                            type="file"
+                            onChange={(e) => setImage(e.target.files[0])}
                             className="w-full border border-gray-200 rounded-lg px-4 py-2 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                     </div>
